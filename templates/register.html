@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="mb-4">Регистрация сотрудника</h2>
+<form method="POST" action="{{ url_for('register') }}">
+    {{ form.hidden_tag() }}
+    {{ form.csrf_token }}
+    <div class="mb-3">
+        {{ form.surname.label }} {{ form.surname(class="form-control") }}
+    </div>
+    <div class="mb-3">
+        {{ form.name.label }} {{ form.name(class="form-control") }}
+    </div>
+    <div class="mb-3">
+        {{ form.age.label }} {{ form.age(class="form-control") }}
+    </div>
+    <div class="mb-3">
+        {{ form.position.label }} {{ form.position(class="form-control") }}
+    </div>
+    <div class="mb-3">
+        {{ form.speciality.label }} {{ form.speciality(class="form-control") }}
+    </div>
+    <div class="mb-3">
+        {{ form.address.label }} {{ form.address(class="form-control") }}
+    </div>
+    <div class="mb-3">
+        {{ form.email.label }} {{ form.email(class="form-control") }}
+    </div>
+    <div class="mb-3">
+        {{ form.password.label }} {{ form.password(class="form-control") }}
+    </div>
+    <div class="mb-3">
+        {{ form.confirm_password.label }} {{ form.confirm_password(class="form-control") }}
+    </div>
+    <div class="mb-3">
+        {{ form.submit(class="btn btn-primary") }}
+    </div>
+</form>
+{% endblock %}

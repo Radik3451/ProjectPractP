@@ -1,0 +1,17 @@
+[
+    {
+        "name": "Иванов Иван Иванович",
+        "photo": "/static/image/ivanov.jpeg",
+        "position": "Программист"
+    },
+    {
+        "name": "Петров Петр Петрович",
+        "photo": "/static/image/petrov.jpeg",
+        "position": "Дизайнер"
+    },
+    {
+        "name": "Сидоров Сидор Сидорович",
+        "photo": "/static/image/sidorov.jpeg",
+        "position": "Менеджер"
+    }
+]

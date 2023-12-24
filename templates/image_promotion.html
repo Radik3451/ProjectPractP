@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Страница с изображением{% endblock %}
+
+{% block content %}
+    <div class="d-flex justify-content-around align-items-center my-5">
+        <div class="text-center">
+            <h1>Заголовок первого уровня</h1>
+            <img src="../static/image/200.jpeg" alt="Картинка" class="img-fluid">
+            <p>Подпись под изображением</p>
+        </div>
+        <div class=" h3">
+            <p>Реклама кампании:</p>
+            <p>1. Надежно</p>
+            <p>2. Быстро</p>
+            <p>3. Качественно</p>
+        </div>
+    </div>
+{% endblock %}

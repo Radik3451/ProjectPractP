@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Страница с изображением{% endblock %}
+
+{% block content %}
+    <div class="d-flex flex-column">
+        <h1 class="mb-4">Загрузка и отображение фото</h1>
+
+        <form method="post" enctype="multipart/form-data" action="{{ url_for('upload_photo') }}">
+            <div class="form-group">
+                <input class="d-block mb-3" type="file" name="photo" accept="image/*" required>
+                <button class="btn btn-primary" type="submit">Загрузить фото</button>
+            </div>
+        </form>
+
+        {% if photo_filename %}
+            <h2>Отображение фото:</h2>
+            <img src="{{ url_for('static', filename='image/' + photo_filename) }}" alt="Uploaded Photo" width="300px">
+        {% endif %}
+    </div>
+{% endblock %}

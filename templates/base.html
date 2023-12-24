@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body class="h-100">
+    <div class="h-100">
+        <div class="row h-100" style="padding: 0;">
+            <div class="col-2">
+                {% include 'header.html' %}
+            </div>
+            <div class="col-10">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+</body>
+</html>

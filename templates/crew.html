@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Экипаж{% endblock %}
+
+{% block content %}
+<section>
+    <h2>Случайный член экипажа</h2>
+    {% with random_member = crew|random %}
+        <img src="{{ random_member.photo }}" alt="{{ random_member.name }}">
+        <p>{{ random_member.name }} - {{ random_member.position }}</p>
+    {% endwith %}
+</section>
+
+<section>
+    <h2>Отсортированный список профессий</h2>
+    <ul>
+        {% for member in crew|sort(attribute='position') %}
+            <li>{{ member.position }}</li>
+        {% endfor %}
+    </ul>
+</section>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "base_mars.html" %}
+
+
+{% block inner_content %}
+    <section>
+        <h4>Ответ на ваш запрос</h4>
+        <p>Фамилия ИО: {{ user_data['inputLastName'] }}</p>
+        <p>Дата рождения: {{ user_data['inputDOB'] }}</p>
+        <p>Пол: {{ user_data['inputGender'] }}</p>
+        <p>Образование: {{ user_data['inputEducation'] }}</p>
+        <p>Вакансия: {{ user_data['inputVacancy'] }}</p>
+        <p>Адрес: {{ user_data['inputAddress'] }}</p>
+        <p>Телефон: {{ user_data['inputPhone'] }}</p>
+        <p>E-mail: {{ user_data['inputEmail'] }}</p>
+    </section>
+{% endblock %}
+

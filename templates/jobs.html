@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Список работ{% endblock %}
+
+{% block content %}
+    <h2>Список работ</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Название работы</th>
+                <th>Ответственный</th>
+                <th>Продолжительность (часы)</th>
+                <th>Список участников</th>
+                <th>Завершена</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for job in jobs %}
+                <tr>
+                    <td>{{ job.id }}</td>
+                    <td>{{ job.job }}</td>
+                    <td>{{ job.team_leader.surname }} {{ job.team_leader.name }}</td>
+                    <td>{{ job.work_size }}</td>
+                    <td>
+                        {% for collaborator in job.collaborators %}
+                            {{ collaborator.name }} {{ collaborator.surname }}
+                            {% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>{{ "Да" if job.is_finished else "Нет" }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

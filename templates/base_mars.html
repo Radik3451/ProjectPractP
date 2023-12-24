@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<main>
+    <section>
+        <h1>{{ company_name }}</h1>
+        <h4>{{ company_slogan }}</h4>
+    </section>
+    {% block inner_content %}{% endblock %}
+</main>
+{% endblock %}

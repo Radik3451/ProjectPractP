@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Список Должностей</h2>
+
+    {% if list == 'ol' %}
+        <ol>
+            {% for position in positions %}
+                <li>{{ position }}</li>
+            {% endfor %}
+        </ol>
+    {% elif list == 'ul' %}
+        <ul>
+            {% for position in positions %}
+                <li>{{ position }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Неверный параметр. Используйте 'list_prof/ol' или 'list_prof/ul'.</p>
+    {% endif %}
+</div>
+{% endblock %}

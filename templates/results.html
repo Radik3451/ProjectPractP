@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Форма{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Результаты отбора</h2>
+    <div class="jumbotron">
+        <h1 class="display-4">Добро пожаловать, {{ nickname }}!</h1>
+        <p class="lead">Вы прошли этап отбора №{{ level }} и ваш текущий рейтинг составляет {{ rating }}.</p>
+        <hr class="my-4">
+        <p>Благодарим вас за участие в нашем отборочном процессе. Мы свяжемся с вами в ближайшее время.</p>
+        <a class="btn btn-primary btn-lg" href="/" role="button">Вернуться на главную</a>
+    </div>
+</div>
+{% endblock %}

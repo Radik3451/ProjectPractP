@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Форма{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Заявка на вакансию</h2>
+    <form method="POST" action="{{ url_for('answer') }}">
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="inputLastName" >Фамилия ИО</label>
+                <input type="text" class="form-control" id="inputLastName" name="inputLastName" placeholder="Иванов Иван Иванович">
+            </div>
+            <div class="form-group col-md-6">
+                <label for="inputDOB">Дата рождения</label>
+                <input type="date" class="form-control" name="inputDOB">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="inputGender">Пол</label>
+                <select name="inputGender" class="form-control">
+                    <option selected></option>
+                    <option>Мужской</option>
+                    <option>Женский</option>
+                </select>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="inputEducation">Образование</label>
+                <input type="text" class="form-control" name="inputEducation" placeholder="Высшее образование">
+            </div>
+        </div>
+        <div class="form-group col-md-6">
+            <label for="inputVacancy">Вакансия, на которую претендуете</label>
+            <input type="text" class="form-control" name="inputVacancy" placeholder="Название вакансии">
+        </div>
+        <div class="form-group col-md-6">
+            <label for="inputAddress">Адрес</label>
+            <input type="text" class="form-control" name="inputAddress" placeholder="123 улица, город, страна">
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="inputPhone">Телефон</label>
+                <input type="tel" class="form-control" name="inputPhone" placeholder="+7 (123) 456-7890">
+            </div>
+            <div class="form-group col-md-6 mb-3">
+                <label for="inputEmail">E-mail</label>
+                <input type="email" class="form-control" name="inputEmail" placeholder="example@example.com">
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Отправить заявку</button>
+    </form>
+</div>
+
+{% endblock %}
