@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Добавление работы{% endblock %}
+
+{% block content %}
+    <h2>Добавление работы</h2>
+    <form method="POST" action="{{ url_for('add_job') }}">
+        {{ form.hidden_tag() }}
+        {{ form.csrf_token }}
+
+        <div class="form-group">
+            {{ form.job_title.label }}
+            {{ form.job_title(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            {{ form.team_leader.label }}
+            {{ form.team_leader(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            {{ form.work_size.label }}
+            {{ form.work_size(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            Выберите необходимых участников при помощи зажатого 'ctrl'<br>
+            {{ form.collaborators.label }}
+            {{ form.collaborators(class="form-control", multiple="multiple") }}
+        </div>
+
+        <div class="form-group">
+            {{ form.is_finished.label }}
+            {{ form.is_finished() }}
+        </div>
+
+        <div class="form-group">
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+{% endblock %}

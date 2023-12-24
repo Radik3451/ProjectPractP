@@ -1,9 +1,10 @@
-
+from flask_login import UserMixin
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from sqlalchemy.orm import sessionmaker
+
 
 db = SQLAlchemy()
 
@@ -25,7 +26,7 @@ members_table = db.Table(
     db.Column('user_id', db.Integer, db.ForeignKey('user.id'))
 )
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     surname = db.Column(db.String(50))

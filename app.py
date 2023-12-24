@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, json, session
+from flask import Flask, render_template, request, redirect, url_for, json, session, flash
 import os
 from functools import wraps 
 from users import members_table, collaborators_table, db, User, Jobs, Department, create_session
@@ -11,8 +11,30 @@ from sqlalchemy.orm import sessionmaker, aliased
 from flask_wtf.csrf import CSRFProtect
 from werkzeug.security import check_password_hash
 
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+
+from jobs_form import AddJobForm, EditJobForm
+
+from api import jobs_bp
+from api_user import user_bp
+from users_resource import users_resource_bp
+from jobs_resource import jobs_resource_bp
+
+login_manager = LoginManager()
+login_manager.login_view = 'login'  # Замените 'login' на имя вашего маршрута для входа в систему
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+
 
 app = Flask(__name__)
+login_manager.init_app(app)
+app.register_blueprint(jobs_bp)
+app.register_blueprint(user_bp)
+app.register_blueprint(users_resource_bp, url_prefix='/api/v2')
+app.register_blueprint(jobs_resource_bp, url_prefix='/api/v2')
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///firm.sqlite3'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -28,13 +50,13 @@ def global_init(db_name):
         db.create_all()
 csrf = CSRFProtect(app)
 
-def login_required(view):
-    @wraps(view)
-    def wrapped_view(*args, **kwargs):
-        if 'user_id' not in session:
-            return redirect(url_for('login', next=request.url))
-        return view(*args, **kwargs)
-    return wrapped_view
+# def login_required(view):
+#     @wraps(view)
+#     def wrapped_view(*args, **kwargs):
+#         if 'user_id' not in session:
+#             return redirect(url_for('login', next=request.url))
+#         return view(*args, **kwargs)
+#     return wrapped_view
 
 @app.route('/')
 @login_required
@@ -262,17 +284,20 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user and check_password_hash(user.hashed_password, form.password.data):
-            # Вход успешен, выполните необходимые действия
-            session['user_id'] = user.id
+            login_user(user)
+            flash('Login successful!', 'success')
             next_page = request.args.get('next')
-            return redirect(next_page)
+            return redirect(url_for('list_jobs'))
+        else:
+            flash('Invalid email or password', 'danger')
     return render_template('login.html', form=form)
 
 # Маршрут для выхода (завершения сессии)
 @app.route('/logout')
 @login_required
 def logout():
-    session.pop('user_id', None)
+    logout_user()
+    flash('You have been logged out', 'success')
     return redirect(url_for('login'))
 
 def get_employees_with_hours_gt_25(session):
@@ -297,17 +322,97 @@ def get_employees_with_hours_gt_25(session):
                     .join(subquery, user_alias.id == subquery.c.id) \
                     .filter(department_alias.id == 1, subquery.c.total_work_size > 25) \
                     .all()
-    print(result)
     return result
 
+@app.route('/add_job', methods=['GET', 'POST'])
+def add_job():
+    form = AddJobForm()
+
+    # Заполняем список ответственных и участников из базы данных
+    form.team_leader.choices = [(user.id, f'{user.surname} {user.name}') for user in User.query.all()]
+    form.collaborators.choices = [(user.id, f'{user.surname} {user.name}') for user in User.query.all()]
+
+    if form.validate_on_submit():
+        # Создаем новую работу на основе данных из формы
+        new_job = Jobs(
+            job=form.job_title.data,
+            team_leader_id=form.team_leader.data,
+            work_size=form.work_size.data,
+            is_finished=form.is_finished.data
+        )
+
+        # Добавляем участников к работе
+        collaborators = User.query.filter(User.id.in_(form.collaborators.data)).all()
+        new_job.collaborators.extend(collaborators)
+
+        # Добавляем работу в базу данных
+        db.session.add(new_job)
+        db.session.commit()
+
+        return redirect(url_for('list_jobs'))
+
+    return render_template('add_job.html', form=form)
+
+@app.route('/edit_job/<int:job_id>', methods=['GET', 'POST'])
+@login_required
+def edit_job(job_id):
+    job = Jobs.query.get_or_404(job_id)
+
+    # Проверяем, имеет ли текущий пользователь права на редактирование или удаление работы
+    if current_user.id != job.team_leader_id and current_user.id != 1:
+        flash('У вас нет прав для редактирования этой работы.', 'danger')
+        return redirect(url_for('list_jobs'))
+
+    form = EditJobForm(obj=job)
+
+    # Заполняем поля формы данными из базы данных
+    form.team_leader.choices = [(user.id, f'{user.surname} {user.name}') for user in User.query.all()]
+    form.collaborators.choices = [(user.id, f'{user.surname} {user.name}') for user in User.query.all()]
+
+    # Устанавливаем выбранные значения в поля team_leader и collaborators
+    # form.team_leader.data = job.team_leader_id
+    # form.collaborators.data = [collaborator.id for collaborator in job.collaborators]
+
+    if form.validate_on_submit():
+        # Преобразуем ID выбранных пользователей в экземпляры класса User перед сохранением в базу данных
+        form.team_leader.data = User.query.get(form.team_leader.data)
+        form.collaborators.data = [User.query.get(user_id) for user_id in form.collaborators.data]
+
+        form.populate_obj(job)
+        db.session.commit()
+        flash('Работа успешно отредактирована.', 'success')
+        return redirect(url_for('list_jobs'))
+
+    return render_template('edit_job.html', form=form, job=job)
+
+# Маршрут для удаления работы
+@app.route('/delete_job/<int:job_id>', methods=['GET', 'POST'])
+@login_required
+def delete_job(job_id):
+    job = Jobs.query.get_or_404(job_id)
+
+    # Проверяем, имеет ли текущий пользователь права на удаление работы
+    if current_user.id != job.team_leader_id and current_user.id != 1:
+        flash('У вас нет прав для удаления этой работы.', 'danger')
+        return redirect(url_for('list_jobs'))
+
+    db.session.delete(job)
+    db.session.commit()
+    flash('Работа успешно удалена.', 'success')
+    return redirect(url_for('list_jobs'))
+
+
 db.init_app(app)
+
+# TODO Переделать форму?
 
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
         # Запрос к базе данных
         # make_request()
-        
+
         # Еще один запрос
         # get_employees_with_hours_gt_25(session)
+
     app.run(debug=True, port=8080)

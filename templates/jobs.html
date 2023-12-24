@@ -3,7 +3,10 @@
 {% block title %}Список работ{% endblock %}
 
 {% block content %}
-    <h2>Список работ</h2>
+    <div class="d-flex align-items-center justify-content-between">
+        <h2>Список работ</h2>
+        <a href="{{ url_for('add_job') }}" class="d-block btn btn-primary" style="margin: 0px 30px 0px 0px">Добавить работу</a>
+    </div>
     <table class="table">
         <thead>
             <tr>
@@ -29,6 +32,11 @@
                         {% endfor %}
                     </td>
                     <td>{{ "Да" if job.is_finished else "Нет" }}</td>
+                    <td>
+                        <!-- Добавлены кнопки для редактирования и удаления -->
+                        <a href="{{ url_for('edit_job', job_id=job.id) }}" class="btn btn-sm btn-primary">Редактировать</a>
+                        <a href="{{ url_for('delete_job', job_id=job.id) }}" class="btn btn-sm btn-danger">Удалить</a>
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>
