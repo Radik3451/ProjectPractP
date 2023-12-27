@@ -6,6 +6,7 @@
 <div class="container mt-5">
     <h2 class="mb-4">Заявка на вакансию</h2>
     <form method="POST" action="{{ url_for('answer') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}"/>
         <div class="form-row">
             <div class="form-group col-md-6">
                 <label for="inputLastName" >Фамилия ИО</label>

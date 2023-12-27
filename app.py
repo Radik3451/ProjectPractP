@@ -8,7 +8,7 @@ from login import LoginForm
 from sqlalchemy import create_engine, text, func
 from sqlalchemy.orm import sessionmaker, aliased
 
-from flask_wtf.csrf import CSRFProtect
+from flask_wtf.csrf import CSRFProtect, generate_csrf
 from werkzeug.security import check_password_hash
 
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
@@ -49,6 +49,7 @@ def global_init(db_name):
     with app.app_context():
         db.create_all()
 csrf = CSRFProtect(app)
+csrf.init_app(app)
 
 # def login_required(view):
 #     @wraps(view)
@@ -87,7 +88,8 @@ def company_image():
 @app.route('/form')
 @login_required
 def form():
-    return render_template('form.html')
+    token = generate_csrf()
+    return render_template('form.html', csrf_token = token)
 
 @app.route('/results/<nickname>/<int:level>/<float:rating>')
 def results(nickname, level, rating):
@@ -96,7 +98,8 @@ def results(nickname, level, rating):
 @app.route('/photo')
 @login_required
 def photo():
-    return render_template('photo.html', photo_filename=None)
+    token = generate_csrf()
+    return render_template('photo.html', photo_filename=None, csrf_token = token)
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
@@ -403,8 +406,6 @@ def delete_job(job_id):
 
 
 db.init_app(app)
-
-# TODO Переделать форму?
 
 if __name__ == '__main__':
     with app.app_context():

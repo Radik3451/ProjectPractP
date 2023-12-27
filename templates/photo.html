@@ -7,6 +7,7 @@
         <h1 class="mb-4">Загрузка и отображение фото</h1>
 
         <form method="post" enctype="multipart/form-data" action="{{ url_for('upload_photo') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}"/>
             <div class="form-group">
                 <input class="d-block mb-3" type="file" name="photo" accept="image/*" required>
                 <button class="btn btn-primary" type="submit">Загрузить фото</button>
